@@ -1,0 +1,47 @@
+{
+  "name": "LERN³ - Learn Web3 by Playing",
+  "short_name": "LERN³",
+  "description": "Master blockchain through fun puzzle games. Learn Web3 concepts by playing, not studying.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1127",
+  "theme_color": "#2DD4BF",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "assets/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "games"],
+  "shortcuts": [
+    {
+      "name": "Continue Playing",
+      "short_name": "Play",
+      "description": "Continue your Web3 learning journey",
+      "url": "/?action=play",
+      "icons": [
+        {
+          "src": "assets/logo-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ]
+}
