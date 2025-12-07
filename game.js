@@ -118,7 +118,7 @@ function loadPuzzles() {
                 "assets/images/level1_1.jpg",
                 "assets/images/level1_2.jpg",
                 "assets/images/level1_3.jpg",
-                "assets/images/level1_4.jpg"
+                "assets/images/level1_4.png"
             ],
             explanation: "A wallet stores your crypto, just like a physical wallet holds cash. But instead of leather, it's digital, and you control it with secret keys, not a zipper."
         },
