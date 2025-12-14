@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a1d3d" />
+  <meta name="description" content="Learn Web3 by playing. Master blockchain through fun puzzle games." />
+
+  <title>LERN³ - Learn Web3 by Playing</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="screen active">
+    <div class="loading-content">
+      <div class="logo-container">
+        <img src="logo-192.png" alt="LERN³ Logo" width="120" height="120" style="border-radius: 24px;" />
+      </div>
+      <h1 class="loading-title">LERN³</h1>
+      <div class="loading-spinner"></div>
+      <p class="loading-text" id="loading-text">Starting up…</p>
+      <div class="loading-progress-container">
+        <div class="loading-progress-bar" id="loading-progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home Screen -->
+  <div id="home-screen" class="screen">
+    <div class="home-content">
+      <div class="hero-header">
+        <div class="logo-mini" aria-hidden="true">
+          <img src="logo-192.png" alt="" width="64" height="64" style="border-radius: 12px;" />
+        </div>
+        <h1 class="home-title">LERN³</h1>
+        <p class="home-subtitle">The Web3 Learning Arcade</p>
+        <p class="tagline">Learn crypto through games, not lectures</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-number">10</div>
+          <div class="stat-label">Levels</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">~15min</div>
+          <div class="stat-label">To Complete</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">Free</div>
+          <div class="stat-label">Forever</div>
+        </div>
+      </div>
+
+      <div class="how-it-works-section">
+        <h3 class="section-title">How It Works</h3>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>See 4 Pictures</h4>
+              <p>They hint at one Web3 term</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Guess the Word</h4>
+              <p>Tap letters to build your answer</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Learn & Level Up</h4>
+              <p>Understand what it means</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-header">
+          <span class="progress-label">Your Progress</span>
+          <span class="progress-value" id="home-progress">0/10</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="home-progress-bar"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="start-btn">
+        <span>Start Learning</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button class="btn-secondary" id="continue-btn" style="display:none;">
+        <span>Continue Level <span id="current-level-num">1</span></span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="built-on-badge">
+        <span>Built on</span>
+        <span class="base-logo">Base ⚡</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tutorial Screen -->
+  <div id="tutorial-screen" class="screen">
+    <div class="tutorial-content">
+      <h2 class="tutorial-title">How to Play</h2>
+
+      <div class="tutorial-steps">
+        <div class="tutorial-step">
+          <div class="tutorial-number">1</div>
+          <div class="tutorial-text">
+            <h3>See 4 Images</h3>
+            <p>Each image hints at a Web3 concept</p>
+          </div>
+        </div>
+
+        <div class="tutorial-step">
+          <div class="tutorial-number">2</div>
+          <div class="tutorial-text">
+            <h3>Build the Word</h3>
+            <p>Tap letters below to fill the answer slots</p>
+          </div>
+        </div>
+
+        <div class="tutorial-step">
+          <div class="tutorial-number">3</div>
+          <div class="tutorial-text">
+            <h3>Learn & Continue</h3>
+            <p>Each level teaches you something new about Web3</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tutorial-tip">
+        <div class="tip-icon">💡</div>
+        <p><strong>Tip:</strong> Use the Shuffle button to rearrange letters. Hints reveal the first letter!</p>
+      </div>
+
+      <button class="btn-primary" id="tutorial-next-btn">
+        <span>Got It! Let's Play</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="screen">
+    <div class="top-bar">
+      <button class="btn-back" id="back-btn" aria-label="Back to home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+
+      <div class="level-info">
+        <span class="level-label">Level</span>
+        <span class="level-number" id="level-number">1</span>
+      </div>
+
+      <div class="difficulty" id="difficulty-badge">EASY</div>
+
+      <div class="progress-info" id="progress-text">1/10</div>
+    </div>
+
+    <div class="image-grid" id="image-grid">
+      <div class="image-card">
+        <img id="image1" class="puzzle-image" src="" alt="Clue 1" />
+      </div>
+      <div class="image-card">
+        <img id="image2" class="puzzle-image" src="" alt="Clue 2" />
+      </div>
+      <div class="image-card">
+        <img id="image3" class="puzzle-image" src="" alt="Clue 3" />
+      </div>
+      <div class="image-card">
+        <img id="image4" class="puzzle-image" src="" alt="Clue 4" />
+      </div>
+    </div>
+
+    <div class="answer-container">
+      <div class="answer-slots" id="answer-slots"></div>
+    </div>
+
+    <div class="letters-container">
+      <div class="letter-tiles" id="letter-tiles"></div>
+
+      <div class="controls-row">
+        <button class="btn-clear" id="clear-btn" type="button">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <span>Clear</span>
+        </button>
+
+        <button class="btn-shuffle" id="shuffle-btn" type="button">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M16 3H13L9 7L5 3H2M16 17H13L9 13L5 17H2M16 3L9 10M16 17L9 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Shuffle</span>
+        </button>
+
+        <button class="btn-hint" id="hint-btn" type="button">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 9V15M10 5H10.01M19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Hint</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="submit-btn" disabled>
+      <span>Check Answer</span>
+    </button>
+  </div>
+
+  <!-- Explanation Screen -->
+  <div id="explanation-screen" class="screen">
+    <div class="explanation-content">
+      <div class="explanation-icon">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="35" stroke="#10B981" stroke-width="6" />
+          <path d="M25 40L35 50L55 30" stroke="#10B981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+
+      <h2 class="explanation-word" id="explanation-word">WALLET</h2>
+      <p class="explanation-text" id="explanation-text">Loading...</p>
+
+      <button class="btn-primary" id="next-level-btn">
+        <span>Next Level</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Completion Screen -->
+  <div id="completion-screen" class="screen">
+    <div class="completion-content">
+      <div class="completion-badge">
+        <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="45" stroke="url(#grad1)" stroke-width="6" />
+          <path d="M30 50L42 62L70 34" stroke="url(#grad1)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+          <defs>
+            <linearGradient id="grad1" x1="0" y1="0" x2="100" y2="100">
+              <stop offset="0%" stop-color="#2DD4BF" />
+              <stop offset="100%" stop-color="#0EA5E9" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <h2 class="completion-title">Demo Complete! 🎉</h2>
+      <p class="completion-subtitle">You've mastered Web3 basics</p>
+
+      <div class="stats-card">
+        <div class="stat-row">
+          <span class="stat-label">Time</span>
+          <span class="stat-value" id="stat-time">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Attempts</span>
+          <span class="stat-value" id="stat-attempts">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-value" id="stat-accuracy">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Best Streak</span>
+          <span class="stat-value" id="stat-streak">—</span>
+        </div>
+      </div>
+
+      <div class="concepts-section">
+        <h3>Concepts Mastered</h3>
+        <div class="concept-list" id="concept-list"></div>
+      </div>
+
+      <div class="email-section">
+        <h3>Want More Levels?</h3>
+        <p class="email-prompt">Get notified when new packs launch:</p>
+        <div class="email-form">
+          <input type="email" id="email-input" placeholder="your@email.com" />
+          <button class="btn-primary" id="email-submit-btn">
+            <span>Notify Me</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="completion-actions">
+        <button class="btn-primary" id="play-again-btn">
+          <span>Play Again</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4 7V4L2 6L4 8V5C4 8.31 6.69 11 10 11C11.01 11 11.97 10.75 12.8 10.3L11.5 9C10.86 9.3 10.44 9.5 10 9.5C7.52 9.5 5.5 7.48 5.5 5C5.5 2.52 7.52 0.5 10 0.5C12.48 0.5 14.5 2.52 14.5 5V5.25L16 6.75V5C16 2.24 13.76 0 11 0C8.24 0 6 2.24 6 5V7H4Z" fill="currentColor"/>
+          </svg>
+        </button>
+
+        <button class="btn-secondary" id="share-btn">
+          <span>Share Progress</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M13 11L17 7M17 7L13 3M17 7H7C4.79 7 3 8.79 3 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas" class="hidden"></canvas>
+  <div id="toast-container"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
