@@ -24,7 +24,12 @@ const gameState = {
   currentStreak: 0,
   
   hintUsedThisLevel: false,
-  hintsUsedTotal: 0
+  hintsUsedTotal: 0,
+
+  // Word Quest 2.0 State
+  xp: 0,
+  badges: [],
+  trainingWallet: null
 };
 
 const FIXED_TILE_COUNT = 15;
@@ -219,6 +224,8 @@ function cacheElements() {
   elements.tutorialScreen = $("tutorial-screen");
   elements.gameScreen = $("game-screen");
   elements.explanationScreen = $("explanation-screen");
+  elements.gateScreen = $("gate-screen");
+  elements.gateContainer = $("gate-container");
   elements.completionScreen = $("completion-screen");
 
   elements.startBtn = $("start-btn");
@@ -413,6 +420,9 @@ function loadProgress() {
     gameState.currentLevel = typeof progress.currentLevel === "number" ? progress.currentLevel : 0;
     gameState.hasSeenTutorial = Boolean(progress.hasSeenTutorial);
     gameState.bestStreak = progress.bestStreak || 0;
+    gameState.xp = progress.xp || 0;
+    gameState.badges = progress.badges || [];
+    gameState.trainingWallet = progress.trainingWallet || null;
 
     console.log("✅ Progress loaded");
   } catch (e) {
@@ -426,7 +436,10 @@ function saveProgress() {
       completedLevels: gameState.completedLevels,
       currentLevel: gameState.currentLevel,
       hasSeenTutorial: gameState.hasSeenTutorial,
-      bestStreak: gameState.bestStreak
+      bestStreak: gameState.bestStreak,
+      xp: gameState.xp,
+      badges: gameState.badges,
+      trainingWallet: gameState.trainingWallet
     };
     localStorage.setItem("lern3_progress", JSON.stringify(progress));
   } catch (e) {
@@ -781,11 +794,19 @@ async function handleCorrectAnswer() {
   const slots = elements.answerSlots.querySelectorAll(".answer-slot");
   slots.forEach(slot => slot.classList.add("correct"));
 
+  startConfetti(1200);
+
+  // Word Quest 2.0: Level 1 (WALLET) Gate Integration
+  if (gameState.currentLevel === 0) {
+    await sleep(650);
+    startLevel1Gate();
+    return;
+  }
+
+  // Standard flow for other levels
   if (!gameState.completedLevels.includes(gameState.currentLevel)) {
     gameState.completedLevels.push(gameState.currentLevel);
   }
-
-  startConfetti(1200);
 
   gameState.currentLevel += 1;
   saveProgress();
@@ -795,6 +816,473 @@ async function handleCorrectAnswer() {
   elements.explanationWord.textContent = puzzle.word;
   elements.explanationText.textContent = puzzle.explanation;
   showScreen("explanation");
+}
+
+// ==============================================
+// Word Quest 2.0 - Level 1 Gate Engine (WALLET)
+// ==============================================
+const LEVEL_1_SEED_WORDS = [
+  "ocean", "lucky", "forest", "river",
+  "castle", "dragon", "garden", "thunder",
+  "butterfly", "mountain", "sunrise", "crystal"
+];
+
+let gateTimerId = null;
+
+function clearGateTimer() {
+  if (gateTimerId) {
+    clearInterval(gateTimerId);
+    gateTimerId = null;
+  }
+}
+
+function startLevel1Gate() {
+  clearGateTimer();
+  showScreen("gate");
+  renderGatePhase1Intro();
+}
+
+// --- Phase 1: Context Screen (3s countdown) ---
+function renderGatePhase1Intro() {
+  clearGateTimer();
+  let secondsLeft = 3;
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill">Step 1 of 4 • Concept</div>
+      <h2 class="gate-title">WALLET</h2>
+      <p class="gate-subtitle">
+        A <strong>WALLET</strong> stores your private crypto keys and gives you absolute control over your digital assets.
+      </p>
+
+      <div class="gate-learn-list">
+        <div class="gate-learn-item">💡 Like your own digital vault — only YOU hold the keys.</div>
+        <div class="gate-learn-item">🔒 No username, no password reset, no bank manager.</div>
+      </div>
+
+      <div class="gate-timer-container">
+        <div class="gate-timer-text" id="intro-timer-text">Creating your training wallet in ${secondsLeft}s...</div>
+        <div class="gate-timer-bar">
+          <div class="gate-timer-fill" id="intro-timer-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-skip-intro-timer" style="width: 100%; margin-top: 8px;">
+        <span>Create Wallet Now</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  `;
+
+  const btnSkip = $("btn-skip-intro-timer");
+  if (btnSkip) {
+    btnSkip.onclick = () => {
+      clearGateTimer();
+      renderGatePhase2WalletGen();
+    };
+  }
+
+  const fillBar = $("intro-timer-fill");
+  const textEl = $("intro-timer-text");
+
+  gateTimerId = setInterval(() => {
+    secondsLeft--;
+    if (fillBar) fillBar.style.width = `${(secondsLeft / 3) * 100}%`;
+    if (textEl) textEl.textContent = `Creating your training wallet in ${secondsLeft}s...`;
+
+    if (secondsLeft <= 0) {
+      clearGateTimer();
+      renderGatePhase2WalletGen();
+    }
+  }, 1000);
+}
+
+// --- Phase 2: Wallet Generation (Tap to Generate) ---
+function renderGatePhase2WalletGen() {
+  clearGateTimer();
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill">Step 2 of 4 • Interactive Practice</div>
+      <h2 class="gate-title">Create Training Wallet</h2>
+      <p class="gate-subtitle">
+        Before you can use Web3, you need cryptographic keys. Tap below to generate your wallet!
+      </p>
+
+      <div class="wallet-tap-box" id="wallet-tap-target">
+        <div class="wallet-tap-icon">🔑</div>
+        <h3 style="font-size: 1.15rem; color: var(--primary-cyan); font-weight: 800;">Tap Anywhere to Generate</h3>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">Zero risk • Powered by Base Sepolia</p>
+      </div>
+
+      <div id="wallet-gen-result" style="display: none; animation: fadeIn 300ms ease;">
+        <div class="network-tag">⚡ Base Sepolia Testnet</div>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px;">Your Public Address (Shareable):</p>
+        <div class="wallet-address-chip" id="generated-address">
+          0x742d35Cc6634C0532925a3b844Bc9e7595f0
+        </div>
+        <div class="gate-learn-list">
+          <div class="gate-learn-item">✅ Public Address: Anyone can send crypto here.</div>
+          <div class="gate-learn-item">⚠️ Private Key: Stays secret inside your wallet.</div>
+        </div>
+        <button class="btn-primary" id="btn-to-seed-warning" style="width: 100%; margin-top: 14px;">
+          <span>Continue to Backup Phrase</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+
+  const tapBox = $("wallet-tap-target");
+  const genResult = $("wallet-gen-result");
+  const btnContinue = $("btn-to-seed-warning");
+
+  if (tapBox) {
+    tapBox.onclick = () => {
+      sfxClick();
+      playTone(720, 0.12, 0.08, "triangle");
+      tapBox.style.display = "none";
+      if (genResult) genResult.style.display = "block";
+      gameState.trainingWallet = "0x742d35Cc6634C0532925a3b844Bc9e7595f0";
+    };
+  }
+
+  if (btnContinue) {
+    btnContinue.onclick = () => {
+      sfxClick();
+      renderGatePhase3SeedIntro();
+    };
+  }
+}
+
+// --- Phase 3: Seed Phrase Warning ---
+function renderGatePhase3SeedIntro() {
+  clearGateTimer();
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill warning">⚠️ Crucial Security Rule</div>
+      <h2 class="gate-title">Your 12-Word Seed Phrase</h2>
+      <p class="gate-subtitle">
+        These 12 words are the <strong>ONLY</strong> master backup to recover your wallet if you lose access.
+      </p>
+
+      <div class="gate-loss-box">
+        <h4>⚠️ The Absolute Rule of Self-Custody</h4>
+        <p>• If your phone is stolen, these 12 words restore everything.</p>
+        <p>• If you lose these words, your crypto is <strong>LOST FOREVER</strong>.</p>
+        <p>• No bank, no support team, and no password reset can help.</p>
+      </div>
+
+      <button class="btn-primary" id="btn-reveal-seed-grid" style="width: 100%; margin-top: 14px;">
+        <span>Show My Seed Phrase</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  `;
+
+  const btnReveal = $("btn-reveal-seed-grid");
+  if (btnReveal) {
+    btnReveal.onclick = () => {
+      sfxClick();
+      renderGatePhase3Memorize();
+    };
+  }
+}
+
+// --- Phase 3c: Seed Words Memorization ---
+function renderGatePhase3Memorize() {
+  clearGateTimer();
+
+  let chipsHtml = "";
+  LEVEL_1_SEED_WORDS.forEach((word, idx) => {
+    chipsHtml += `
+      <div class="seed-chip">
+        <span class="seed-idx">${idx + 1}.</span>
+        <span class="seed-word">${word}</span>
+      </div>
+    `;
+  });
+
+  let timeLeft = 10;
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill">Step 3 of 4 • Memorize & Record</div>
+      <h2 class="gate-title">Backup Phrase</h2>
+      <p class="gate-subtitle">
+        Write these 12 words down in order. <strong>You will be tested to prove you have them!</strong>
+      </p>
+
+      <div class="seed-grid">
+        ${chipsHtml}
+      </div>
+
+      <div class="gate-timer-container">
+        <div class="gate-timer-text" id="seed-countdown-text">⏱️ Recall test begins in ${timeLeft}s...</div>
+        <div class="gate-timer-bar">
+          <div class="gate-timer-fill" id="seed-countdown-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-ready-for-recall" style="width: 100%;">
+        <span>I've Written Them Down ✓</span>
+      </button>
+    </div>
+  `;
+
+  const fillBar = $("seed-countdown-fill");
+  const countText = $("seed-countdown-text");
+  const btnReady = $("btn-ready-for-recall");
+
+  if (btnReady) {
+    btnReady.onclick = () => {
+      clearGateTimer();
+      sfxClick();
+      renderGatePhase4RecallQ1();
+    };
+  }
+
+  gateTimerId = setInterval(() => {
+    timeLeft--;
+    if (fillBar) fillBar.style.width = `${(timeLeft / 10) * 100}%`;
+    if (countText) countText.textContent = `⏱️ Recall test begins in ${timeLeft}s...`;
+
+    if (timeLeft <= 0) {
+      clearGateTimer();
+      renderGatePhase4RecallQ1();
+    }
+  }, 1000);
+}
+
+// --- Phase 4: Recall Gate Question 1 ---
+function renderGatePhase4RecallQ1() {
+  clearGateTimer();
+
+  const options = [
+    { label: "A) river", isCorrect: false },
+    { label: "B) castle", isCorrect: true },
+    { label: "C) dragon", isCorrect: false },
+    { label: "D) ocean", isCorrect: false }
+  ];
+
+  let buttonsHtml = "";
+  options.forEach((opt, idx) => {
+    buttonsHtml += `
+      <button class="recall-btn" data-correct="${opt.isCorrect}" id="opt-q1-${idx}">
+        ${opt.label}
+      </button>
+    `;
+  });
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill warning">Gate Check 1 of 2 • Required</div>
+      <h2 class="gate-title">Verify Backup Phrase</h2>
+      <p class="gate-subtitle">
+        Let's make sure you recorded your seed phrase!
+      </p>
+
+      <div style="background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); margin: 16px 0; border: 1px solid var(--border-color);">
+        <p style="font-size: 1.15rem; font-weight: 800; color: #fff;">
+          What was word <span style="color: var(--primary-cyan);">#5</span>?
+        </p>
+      </div>
+
+      <div class="recall-options" id="recall-options-q1">
+        ${buttonsHtml}
+      </div>
+
+      <p style="font-size: 0.8rem; color: var(--text-muted);">
+        🔒 Passing this test is required to unlock Level 2
+      </p>
+    </div>
+  `;
+
+  const btnContainer = $("recall-options-q1");
+  if (btnContainer) {
+    btnContainer.querySelectorAll(".recall-btn").forEach(btn => {
+      btn.onclick = () => {
+        const isCorrect = btn.dataset.correct === "true";
+        if (isCorrect) {
+          btn.classList.add("correct-pick");
+          sfxCorrect();
+          setTimeout(() => {
+            renderGatePhase4RecallQ2();
+          }, 500);
+        } else {
+          btn.classList.add("wrong-pick");
+          sfxWrong();
+          if ("vibrate" in navigator) navigator.vibrate?.(200);
+          setTimeout(() => {
+            renderGateFailureEducation("word #5 (castle)");
+          }, 600);
+        }
+      };
+    });
+  }
+}
+
+// --- Phase 4: Recall Gate Question 2 ---
+function renderGatePhase4RecallQ2() {
+  clearGateTimer();
+
+  const options = [
+    { label: "A) butterfly", isCorrect: true },
+    { label: "B) crystal", isCorrect: false },
+    { label: "C) mountain", isCorrect: false },
+    { label: "D) sunrise", isCorrect: false }
+  ];
+
+  let buttonsHtml = "";
+  options.forEach((opt, idx) => {
+    buttonsHtml += `
+      <button class="recall-btn" data-correct="${opt.isCorrect}" id="opt-q2-${idx}">
+        ${opt.label}
+      </button>
+    `;
+  });
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill warning">Gate Check 2 of 2 • Required</div>
+      <h2 class="gate-title">Final Security Check</h2>
+      <p class="gate-subtitle">
+        One more check to guarantee you can recover your funds:
+      </p>
+
+      <div style="background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); margin: 16px 0; border: 1px solid var(--border-color);">
+        <p style="font-size: 1.15rem; font-weight: 800; color: #fff;">
+          What was word <span style="color: var(--primary-cyan);">#9</span>?
+        </p>
+      </div>
+
+      <div class="recall-options" id="recall-options-q2">
+        ${buttonsHtml}
+      </div>
+
+      <p style="font-size: 0.8rem; color: var(--text-muted);">
+        🔒 Passing this test is required to unlock Level 2
+      </p>
+    </div>
+  `;
+
+  const btnContainer = $("recall-options-q2");
+  if (btnContainer) {
+    btnContainer.querySelectorAll(".recall-btn").forEach(btn => {
+      btn.onclick = () => {
+        const isCorrect = btn.dataset.correct === "true";
+        if (isCorrect) {
+          btn.classList.add("correct-pick");
+          sfxCorrect();
+          setTimeout(() => {
+            renderGateSuccess();
+          }, 500);
+        } else {
+          btn.classList.add("wrong-pick");
+          sfxWrong();
+          if ("vibrate" in navigator) navigator.vibrate?.(200);
+          setTimeout(() => {
+            renderGateFailureEducation("word #9 (butterfly)");
+          }, 600);
+        }
+      };
+    });
+  }
+}
+
+// --- Failure Education (Real-world consequence simulated) ---
+function renderGateFailureEducation(missedWord) {
+  clearGateTimer();
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill danger">❌ Gate Failed: Wallet Lost</div>
+      <h2 class="gate-title" style="color: var(--error);">Recovery Failed!</h2>
+      
+      <div class="gate-loss-box">
+        <h4>💸 Real-World Consequence</h4>
+        <p>Imagine this situation:</p>
+        <p>• You have <strong>$10,000 in your crypto wallet</strong>.</p>
+        <p>• Your phone breaks or gets stolen.</p>
+        <p>• You remembered 11 words, but missed ${missedWord}.</p>
+        <p style="font-weight: 800; color: #fff; margin-top: 8px;">
+          Result: Your $10,000 is GONE FOREVER.
+        </p>
+        <p style="font-size: 0.82rem; color: #FCA5A5; margin-top: 4px;">
+          No bank manager can help you. No customer support exists.
+        </p>
+      </div>
+
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+        In training, failure is free. In real Web3, it costs everything. Write down your words carefully!
+      </p>
+
+      <button class="btn-primary" id="btn-retry-gate-seed" style="width: 100%;">
+        <span>Study Seed Phrase Again</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 7V4L2 6L4 8V5C4 8.31 6.69 11 10 11C11.01 11 11.97 10.75 12.8 10.3L11.5 9C10.86 9.3 10.44 9.5 10 9.5C7.52 9.5 5.5 7.48 5.5 5C5.5 2.52 7.52 0.5 10 0.5C12.48 0.5 14.5 2.52 14.5 5V5.25L16 6.75V5C16 2.24 13.76 0 11 0C8.24 0 6 2.24 6 5V7H4Z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  `;
+
+  const btnRetry = $("btn-retry-gate-seed");
+  if (btnRetry) {
+    btnRetry.onclick = () => {
+      sfxClick();
+      renderGatePhase3Memorize();
+    };
+  }
+}
+
+// --- Success State (Gate Passed, Unlock Level 2) ---
+function renderGateSuccess() {
+  clearGateTimer();
+  startConfetti(1500);
+
+  // Award progress and unlock Level 2
+  if (!gameState.completedLevels.includes(0)) {
+    gameState.completedLevels.push(0);
+  }
+  gameState.currentLevel = 1;
+  gameState.xp = (gameState.xp || 0) + 100;
+  if (!gameState.badges) gameState.badges = [];
+  if (!gameState.badges.includes("Identity")) {
+    gameState.badges.push("Identity");
+  }
+  saveProgress();
+
+  elements.gateContainer.innerHTML = `
+    <div class="gate-card">
+      <div class="gate-badge-pill success">🎉 Gate Cleared!</div>
+      <h2 class="gate-title">Self-Custody Mastered!</h2>
+      <p class="gate-subtitle">You just passed the foundation gate of Web3.</p>
+
+      <div class="gate-learn-list">
+        <div class="gate-learn-item">✅ <strong>Wallets</strong> store private keys & onchain identity</div>
+        <div class="gate-learn-item">✅ <strong>Seed phrase</strong> = the absolute master backup</div>
+        <div class="gate-learn-item">✅ <strong>Losing phrase</strong> = total irreversible loss</div>
+        <div class="gate-learn-item">✅ <strong>Self-custody</strong> = true financial sovereignty</div>
+      </div>
+
+      <div class="gate-rewards-row">
+        <div class="gate-reward-badge">⚡ +100 XP</div>
+        <div class="gate-reward-badge">🛡️ Identity Badge #1</div>
+      </div>
+
+      <button class="btn-primary" id="btn-advance-to-gas" style="width: 100%; margin-top: 14px;">
+        <span>Continue to Level 2: GAS</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  `;
+
+  const btnAdvance = $("btn-advance-to-gas");
+  if (btnAdvance) {
+    btnAdvance.onclick = () => {
+      sfxClick();
+      showScreen("game");
+    };
+  }
 }
 
 async function handleWrongAnswer() {
@@ -939,6 +1427,7 @@ function setupEventListeners() {
   elements.backBtn.onclick = (e) => {
     e.preventDefault();
     sfxClick();
+    clearGateTimer();
     if (confirm("Leave current level? Progress will be saved.")) {
       showScreen("home");
     }
@@ -999,6 +1488,9 @@ function setupEventListeners() {
       gameState.currentStreak = 0;
       gameState.bestStreak = 0;
       gameState.hintsUsedTotal = 0;
+      gameState.xp = 0;
+      gameState.badges = [];
+      gameState.trainingWallet = null;
 
       saveProgress();
       showScreen("home");

@@ -1430,3 +1430,293 @@ input:focus-visible {
 .loading-spinner {
   display: none !important;
 }
+
+/* ===================================
+   Word Quest 2.0 - Interactive Gates
+   =================================== */
+#gate-screen {
+  z-index: 50;
+  background: var(--primary-darker);
+  overflow-y: auto;
+}
+
+.gate-content-wrapper {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+  animation: fadeIn 300ms ease;
+}
+
+.gate-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 24px 20px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  text-align: center;
+}
+
+.gate-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(45, 212, 191, 0.15);
+  color: var(--primary-cyan);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.gate-badge-pill.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.gate-badge-pill.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error);
+}
+
+.gate-badge-pill.success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.gate-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+
+.gate-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Generation Tap Box */
+.wallet-tap-box {
+  background: rgba(45, 212, 191, 0.06);
+  border: 2px dashed var(--primary-cyan);
+  border-radius: var(--radius-lg);
+  padding: 28px 16px;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  margin: 16px 0;
+  position: relative;
+}
+
+.wallet-tap-box:hover, .wallet-tap-box:active {
+  background: rgba(45, 212, 191, 0.12);
+  transform: scale(1.02);
+  box-shadow: var(--shadow-glow);
+}
+
+.wallet-tap-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  animation: float 2.5s ease-in-out infinite;
+}
+
+.wallet-address-chip {
+  font-family: monospace;
+  font-size: 0.85rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--primary-cyan);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin: 12px 0;
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.network-tag {
+  display: inline-block;
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--accent-blue);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+/* Seed Phrase Grid */
+.seed-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.seed-chip {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+}
+
+.seed-idx {
+  color: var(--primary-cyan);
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 18px;
+}
+
+.seed-word {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* Timer Countdown */
+.gate-timer-container {
+  margin: 14px 0 18px;
+}
+
+.gate-timer-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--warning);
+  margin-bottom: 6px;
+}
+
+.gate-timer-bar {
+  height: 6px;
+  background: var(--bg-input);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gate-timer-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--warning), var(--error));
+  width: 100%;
+  transition: width 1s linear;
+}
+
+/* Recall Question Options */
+.recall-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.recall-btn {
+  background: var(--bg-input);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 10px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.recall-btn:hover {
+  border-color: var(--primary-cyan);
+  background: rgba(45, 212, 191, 0.1);
+  transform: translateY(-2px);
+}
+
+.recall-btn.correct-pick {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border-color: var(--success) !important;
+  color: #fff !important;
+}
+
+.recall-btn.wrong-pick {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: var(--error) !important;
+  color: #fff !important;
+  animation: shake 400ms ease;
+}
+
+/* Callout Boxes */
+.gate-loss-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: left;
+  margin: 16px 0;
+}
+
+.gate-loss-box h4 {
+  color: var(--error);
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gate-loss-box p {
+  font-size: 0.88rem;
+  color: #FCA5A5;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+
+.gate-learn-list {
+  text-align: left;
+  background: var(--bg-input);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin: 16px 0;
+}
+
+.gate-learn-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.gate-learn-item:last-child {
+  margin-bottom: 0;
+}
+
+.gate-rewards-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.gate-reward-badge {
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--primary-cyan);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
