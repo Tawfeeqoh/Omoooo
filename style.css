@@ -566,6 +566,9 @@ body {
   display: flex;
   flex-direction: column;
   padding: 0 !important;
+  overflow-y: auto;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
 .top-bar {
@@ -680,7 +683,8 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   padding: 16px;
-  flex: 1;
+  flex: 0 0 auto;
+  max-height: min(46vh, 320px);
   align-content: center;
   opacity: 0;
   animation: fadeInGrid 400ms ease forwards;
@@ -699,7 +703,7 @@ body {
 }
 
 .image-card {
-  aspect-ratio: 1;
+  min-height: 100px;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1346,10 +1350,11 @@ body {
   .image-grid {
     gap: 8px;
     padding: 12px;
+    max-height: min(40vh, 260px);
   }
   
   .answer-container {
-    margin: 12px 0;
+    margin: 8px 0;
   }
   
   .letters-container {
@@ -1362,13 +1367,23 @@ body {
 }
 
 @media (max-height: 650px) {
+  .image-grid {
+    max-height: min(36vh, 220px);
+  }
+
   .letter-tiles {
     min-height: 80px;
   }
 
   .letter-tile {
     width: 48px;
-    height: 56px;
+    height: 52px;
+    font-size: 1.5rem;
+  }
+
+  .answer-slot {
+    width: 42px;
+    height: 52px;
     font-size: 1.5rem;
   }
 }
