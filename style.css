@@ -755,22 +755,44 @@ body {
 /* Answer Section */
 .answer-container {
   padding: 0 16px;
-  margin: 16px 0;
+  margin: 12px 0;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* "X letters" label */
+.answer-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
 }
 
 .answer-slots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.answer-slot-row {
   display: flex;
   gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
+/* The slot itself — now bigger and glowing */
 .answer-slot {
-  width: 48px;
-  height: 60px;
-  background: var(--bg-input);
-  border: 3px solid var(--border-color);
+  width: 52px;
+  height: 64px;
+  background: rgba(45, 212, 191, 0.06);
+  border: 2.5px solid rgba(45, 212, 191, 0.35);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -780,24 +802,26 @@ body {
   color: transparent;
   transition: all var(--transition-normal);
   position: relative;
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.1), inset 0 0 6px rgba(45, 212, 191, 0.04);
 }
 
 .answer-slot::after {
   content: '';
   position: absolute;
-  bottom: 8px;
-  width: 24px;
-  height: 3px;
-  background: var(--border-color);
+  bottom: 9px;
+  width: 26px;
+  height: 2.5px;
+  background: rgba(45, 212, 191, 0.4);
   border-radius: 999px;
   transition: all var(--transition-normal);
 }
 
 .answer-slot.filled {
-  background: var(--bg-card);
+  background: rgba(45, 212, 191, 0.12);
   border-color: var(--primary-cyan);
   color: var(--primary-cyan);
-  transform: scale(1.05);
+  transform: scale(1.06);
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.25), inset 0 0 8px rgba(45, 212, 191, 0.08);
 }
 
 .answer-slot.filled::after {
@@ -808,6 +832,7 @@ body {
   background: var(--success);
   border-color: var(--success);
   color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
   animation: correctPulse 500ms ease;
 }
 
@@ -824,6 +849,7 @@ body {
   background: var(--error);
   border-color: var(--error);
   color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
   animation: shake 500ms ease;
 }
 
@@ -849,11 +875,10 @@ body {
 }
 
 .letter-tiles {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-  min-height: 120px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 7px;
+  justify-items: center;
 }
 
 .letter-tile {

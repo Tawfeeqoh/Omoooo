@@ -251,7 +251,6 @@ function cacheElements() {
   elements.clearBtn = $("clear-btn");
   elements.shuffleBtn = $("shuffle-btn");
   elements.hintBtn = $("hint-btn");
-  elements.submitBtn = $("submit-btn");
 
   elements.explanationWord = $("explanation-word");
   elements.explanationText = $("explanation-text");
@@ -579,7 +578,6 @@ async function loadLevel(levelIndex) {
   elements.image4.src = puzzle.images[3];
 
   gameState.userAnswer = [];
-  elements.submitBtn.disabled = true;
   elements.answerSlots.innerHTML = "";
   elements.letterTiles.innerHTML = "";
 
@@ -591,6 +589,12 @@ async function loadLevel(levelIndex) {
 // Answer Slots  
 // ================================  
 function setupAnswerSlots(length) {
+  // word-length label
+  const label = document.createElement("div");
+  label.className = "answer-label";
+  label.textContent = `${length} letters`;
+  elements.answerSlots.appendChild(label);
+
   for (let i = 0; i < length; i++) {
     const slot = document.createElement("div");
     slot.className = "answer-slot";
@@ -687,7 +691,10 @@ function handleLetterTap(letter, tileIndex) {
   const tile = elements.letterTiles.querySelector(`[data-index="${tileIndex}"]`);
   if (tile) tile.classList.add("used");
 
-  elements.submitBtn.disabled = (gameState.userAnswer.length !== puzzle.word.length);
+  // Auto-submit when all slots are filled
+  if (gameState.userAnswer.length === puzzle.word.length) {
+    setTimeout(submitAnswer, 120); // tiny delay so last slot animation plays first
+  }
 }
 
 function updateAnswerSlots() {
@@ -714,7 +721,6 @@ function clearAnswer() {
 
   gameState.userAnswer = [];
   updateAnswerSlots();
-  elements.submitBtn.disabled = true;
 }
 
 // ================================  
@@ -1458,11 +1464,6 @@ function setupEventListeners() {
     useHint();
   };
 
-  elements.submitBtn.onclick = (e) => {
-    e.preventDefault();
-    submitAnswer();
-  };
-
   elements.nextLevelBtn.onclick = (e) => {
     e.preventDefault();
     sfxClick();
@@ -1537,8 +1538,9 @@ function setupEventListeners() {
     }
 
     if (e.key === "Enter") {
-      if (!elements.submitBtn.disabled) {
-        elements.submitBtn.click();
+      const puzzle = gameState.puzzles[gameState.currentLevel];
+      if (gameState.userAnswer.length === puzzle.word.length) {
+        submitAnswer();
       }
     }
   });
