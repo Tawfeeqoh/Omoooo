@@ -246,6 +246,8 @@ function cacheElements() {
   elements.image3 = $("image3");
   elements.image4 = $("image4");
 
+  elements.answerContainer = document.querySelector(".answer-container");
+  elements.answerLabel = $("answer-label");
   elements.answerSlots = $("answer-slots");
   elements.letterTiles = $("letter-tiles");
   elements.clearBtn = $("clear-btn");
@@ -589,12 +591,11 @@ async function loadLevel(levelIndex) {
 // Answer Slots  
 // ================================  
 function setupAnswerSlots(length) {
-  // word-length label
-  const label = document.createElement("div");
-  label.className = "answer-label";
-  label.textContent = `${length} letters`;
-  elements.answerSlots.appendChild(label);
+  if (elements.answerLabel) {
+    elements.answerLabel.textContent = `${length} letters`;
+  }
 
+  elements.answerSlots.innerHTML = "";
   for (let i = 0; i < length; i++) {
     const slot = document.createElement("div");
     slot.className = "answer-slot";
@@ -628,17 +629,9 @@ function setupLetterTiles(word) {
 function renderLetterTiles() {
   elements.letterTiles.innerHTML = "";
   
-  const wordLength = gameState.puzzles[gameState.currentLevel].word.length;
-  const tileSize = wordLength > 6 ? 'small' : 'normal';
-  
   gameState.availableLetters.forEach((letter, index) => {
     const tile = document.createElement("button");
     tile.className = "letter-tile";
-    if (tileSize === 'small') {
-      tile.style.width = "48px";
-      tile.style.height = "56px";
-      tile.style.fontSize = "1.5rem";
-    }
     tile.textContent = letter;
     tile.dataset.index = String(index);
     tile.dataset.letter = letter;
@@ -785,6 +778,21 @@ function submitAnswer() {
   } else {
     handleWrongAnswer();
   }
+}
+
+async function handleWrongAnswer() {
+  sfxWrong();
+  gameState.currentStreak = 0;
+
+  const slots = elements.answerSlots.querySelectorAll(".answer-slot");
+  slots.forEach(slot => slot.classList.add("wrong"));
+
+  showToast("Not quite! Try again", "error", 1500);
+
+  // Let shake animation finish, then auto-clear so user can re-try immediately
+  await sleep(600);
+  slots.forEach(slot => slot.classList.remove("wrong"));
+  clearAnswer();
 }
 
 async function handleCorrectAnswer() {

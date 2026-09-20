@@ -755,24 +755,8 @@ body {
 /* Answer Section */
 .answer-container {
   padding: 0 16px;
-  margin: 12px 0;
+  margin: 10px 0;
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-/* "X letters" label */
-.answer-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
-}
-
-.answer-slots {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -780,19 +764,31 @@ body {
   width: 100%;
 }
 
-.answer-slot-row {
+/* "X letters" label */
+.answer-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--primary-cyan);
+  opacity: 0.85;
+}
+
+.answer-slots {
   display: flex;
   gap: 8px;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
-/* The slot itself — now bigger and glowing */
+/* The slot itself — glowing focal point */
 .answer-slot {
-  width: 52px;
-  height: 64px;
-  background: rgba(45, 212, 191, 0.06);
-  border: 2.5px solid rgba(45, 212, 191, 0.35);
+  width: 48px;
+  height: 60px;
+  background: rgba(45, 212, 191, 0.08);
+  border: 2.5px solid rgba(45, 212, 191, 0.4);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -802,26 +798,26 @@ body {
   color: transparent;
   transition: all var(--transition-normal);
   position: relative;
-  box-shadow: 0 0 10px rgba(45, 212, 191, 0.1), inset 0 0 6px rgba(45, 212, 191, 0.04);
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.12), inset 0 0 8px rgba(45, 212, 191, 0.04);
 }
 
 .answer-slot::after {
   content: '';
   position: absolute;
-  bottom: 9px;
-  width: 26px;
+  bottom: 8px;
+  width: 24px;
   height: 2.5px;
-  background: rgba(45, 212, 191, 0.4);
+  background: rgba(45, 212, 191, 0.5);
   border-radius: 999px;
   transition: all var(--transition-normal);
 }
 
 .answer-slot.filled {
-  background: rgba(45, 212, 191, 0.12);
+  background: rgba(45, 212, 191, 0.15);
   border-color: var(--primary-cyan);
   color: var(--primary-cyan);
   transform: scale(1.06);
-  box-shadow: 0 0 16px rgba(45, 212, 191, 0.25), inset 0 0 8px rgba(45, 212, 191, 0.08);
+  box-shadow: 0 0 18px rgba(45, 212, 191, 0.3), inset 0 0 10px rgba(45, 212, 191, 0.1);
 }
 
 .answer-slot.filled::after {
@@ -832,7 +828,7 @@ body {
   background: var(--success);
   border-color: var(--success);
   color: #FFFFFF;
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.5);
   animation: correctPulse 500ms ease;
 }
 
@@ -849,7 +845,7 @@ body {
   background: var(--error);
   border-color: var(--error);
   color: #FFFFFF;
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.5);
   animation: shake 500ms ease;
 }
 
@@ -867,33 +863,43 @@ body {
 
 /* Letters Section */
 .letters-container {
-  padding: 0 16px 16px;
+  padding: 0 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   flex-shrink: 0;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
 }
 
 .letter-tiles {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 7px;
-  justify-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
 }
 
 .letter-tile {
-  width: 52px;
-  height: 60px;
+  flex: 0 0 calc((100% - 42px) / 8);
+  max-width: 46px;
+  min-width: 34px;
+  height: 52px;
   background: linear-gradient(135deg, #FFFFFF, #F1F5F9);
   border: none;
   border-radius: var(--radius-md);
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: var(--primary-darker);
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transition: all var(--transition-fast);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .letter-tile::before {
@@ -1338,14 +1344,16 @@ body {
   
   .answer-slot {
     width: 44px;
-    height: 56px;
-    font-size: 1.5rem;
+    height: 54px;
+    font-size: 1.45rem;
   }
   
   .letter-tile {
-    width: 48px;
-    height: 56px;
-    font-size: 1.5rem;
+    flex: 0 0 calc((100% - 42px) / 8);
+    max-width: 42px;
+    min-width: 32px;
+    height: 48px;
+    font-size: 1.35rem;
   }
   
   .completion-title {
